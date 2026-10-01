@@ -1,2 +1,2 @@
-# App-Control-Cerveceria
-Una web app para controlar con unicamente tu mano la producción de una cerveceria
+# App Control Cerveceria
+Una web app para controlar solamente con tu mano la producción de una cerveceria, de la manera más rápida y segura
