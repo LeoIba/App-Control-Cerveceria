@@ -602,14 +602,6 @@ CREATE TABLE Esta_Compuesto (
    ÍNDICES
    ============================================================ */
 
-/*
-   Oracle crea automáticamente índices para las PRIMARY KEY
-   y UNIQUE.
-
-   Creamos índices para las FK que pueden ser utilizados
-   frecuentemente en JOINs.
-*/
-
 CREATE INDEX idx_lotes_recetas
     ON Lotes (Recetas_r_cod);
 
