@@ -15,3 +15,25 @@ EXCEPTION
         ROLLBACK;
         RAISE;
 END;
+
+CREATE OR REPLACE PROCEDURE registrar_barril(capacidad IN NUMBER, conector IN VARCHAR2, estado IN VARCHAR2, ubicacion IN VARCHAR2, inventario_cod IN NUMBER, lote_barril_cod IN NUMBER, fecha_inicio IN DATE)
+AS existe_lote NUMBER; 
+barril_cod NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO existe_lote
+    FROM Lotes
+    WHERE lot_cod = lote_barril_cod;
+    IF existe_lote = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'El Lote NO se existe o NO esta cargado, haciendo rollback');
+    END IF;
+    INSERT INTO Barriles (b_capacidad, b_tipo_conector, b_estado_operativo, b_ubicacion_actual, Inventario_i_cod)
+    VALUES (capacidad, conector, estado, ubicacion, inventario_cod)
+    RETURNING b_cod INTO barril_cod;
+    INSERT INTO Esta_Compuesto (lot_fecha_inicio, Lotes_lot_cod, Barriles_b_cod)
+    VALUES (fecha_inicio, lote_barril_cod, barril_cod);
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
