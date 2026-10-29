@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE registrar_movimiento(fecha IN DATE, hora IN NUMBER, lugar_origen IN VARCHAR2, lugar_destino IN VARCHAR2, responsable IN VARCHAR2, barril_cod IN NUMBER)
+CREATE OR REPLACE PROCEDURE movimiento_alta(fecha IN DATE, hora IN NUMBER, lugar_origen IN VARCHAR2, lugar_destino IN VARCHAR2, responsable IN VARCHAR2, barril_cod IN NUMBER)
 AS existebarril NUMBER;
 BEGIN 
     SELECT COUNT(*) INTO existebarril
@@ -16,7 +16,7 @@ EXCEPTION
         RAISE;
 END;
 
-CREATE OR REPLACE PROCEDURE registrar_barril(capacidad IN NUMBER, conector IN VARCHAR2, estado IN VARCHAR2, ubicacion IN VARCHAR2, inventario_cod IN NUMBER, lote_barril_cod IN NUMBER, fecha_inicio IN DATE)
+CREATE OR REPLACE PROCEDURE barril_alta(capacidad IN NUMBER, conector IN VARCHAR2, estado IN VARCHAR2, ubicacion IN VARCHAR2, inventario_cod IN NUMBER, lote_barril_cod IN NUMBER, fecha_inicio IN DATE)
 AS existe_lote NUMBER; 
 barril_cod NUMBER;
 BEGIN
@@ -38,7 +38,7 @@ EXCEPTION
         RAISE;
 END;
 
-CREATE OR REPLACE PROCEDURE registrar_lote (volumen_total IN NUMBER, fecha_vencimiento IN DATE, fecha_maceracion IN DATE, cant_maceracion IN NUMBER, fecha_hervido IN DATE, cant_hervido IN NUMBER,
+CREATE OR REPLACE PROCEDURE lote_alta (volumen_total IN NUMBER, fecha_vencimiento IN DATE, fecha_maceracion IN DATE, cant_maceracion IN NUMBER, fecha_hervido IN DATE, cant_hervido IN NUMBER,
 fecha_whirpool IN DATE, cant_whirpool IN NUMBER, fecha_fermentacion IN DATE, cant_fermentacion IN NUMBER, fecha_dryhopping IN DATE, cant_dryhopping IN NUMBER, fecha_carbonatacion IN DATE, 
 cant_carbonatacion IN NUMBER, fecha_fin_preparado IN DATE, receta_variable_cod IN NUMBER, barril_variable_cod IN NUMBER, fecha_inicio_comp IN DATE, barril_cap IN NUMBER, barril_conector IN VARCHAR2,
 barril_estado IN VARCHAR2, barril_ubi IN VARCHAR2, barril_inv_cod IN NUMBER

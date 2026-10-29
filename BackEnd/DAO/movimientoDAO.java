@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class movimientoDAO {
     public boolean registrarMovimientoPLSQL(movimiento mov) {
-        String sql = "{call registrar_movimiento(?, ?, ?, ?, ?, ?, ?)";
+        String sql = "{call movimiento_alta(?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection(); CallableStatement consulta = conn.prepareCall(sql)) {
             consulta.setDate(1, mov.getMovFecha());
             consulta.setInt(2, mov.getMovHora());

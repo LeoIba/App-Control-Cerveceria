@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class barrilDAO {
     public boolean registrarBarrilPLSQL(double capacidad, String conector, String estado, String ubicacion,
             int inventarioCod, int loteCod, Date fechaInicio) {
-        String sql = "{call registrar_barril(?, ?, ?, ?, ?, ?, ?)}";
+        String sql = "{call barril_alta(?, ?, ?, ?, ?, ?, ?)}";
 
         try (Connection conn = DBConnection.getConnection();
                 CallableStatement consulta = conn.prepareCall(sql)) {

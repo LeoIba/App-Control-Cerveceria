@@ -13,7 +13,7 @@ public class loteDAO {
             Date fFin, int recetaCod, int barrilCod, Date fInicioComp, double bCap, String bConector, String bEstado,
             String bUbi, int bInvCod) {
         // Mamita que quedo larga la tx
-        String sql = "{call registrar_lote_transaccion(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        String sql = "{call lote_alta(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
         try (Connection conn = DBConnection.getConnection();
                 CallableStatement stmt = conn.prepareCall(sql)) {
