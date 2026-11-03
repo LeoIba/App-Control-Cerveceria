@@ -433,3 +433,33 @@ EXCEPTION
         RAISE;
 END;
 
+CREATE OR REPLACE PROCEDURE entrega_alta (remito IN VARCHAR2, fecha_entrega IN DATE, tiempo IN NUMBER, fecha_devolucion IN DATE, barril_cod IN NUMBER, cliente_cod IN NUMBER
+) AS
+    existe_barril NUMBER;
+    existe_cliente NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO existe_barril
+    FROM Barriles
+    WHERE b_cod = barril_cod;
+    
+    IF existe_barril = 0 THEN
+        RAISE_APPLICATION_ERROR(-20007, 'El barril NO se encuentra en el sistema');
+    END IF;
+
+    SELECT COUNT(*) INTO existe_cliente
+    FROM Clientes
+    WHERE cl_cod = cliente_cod;
+    
+    IF existe_cliente = 0 THEN
+        RAISE_APPLICATION_ERROR(-20008, 'El Cliente NO se encuentra en el Sistema');
+    END IF;
+
+    INSERT INTO Entregas (en_remito_factura, en_fecha_entrega, en_tiempo_permanencia, en_fecha_devolucion, Barriles_b_cod, Clientes_cl_cod
+    ) VALUES (remito, fecha_entrega, tiempo, fecha_devolucion, barril_cod, cliente_cod);
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;

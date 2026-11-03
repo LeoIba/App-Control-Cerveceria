@@ -331,7 +331,7 @@ CREATE TABLE Clientes (
    ============================================================ */
 CREATE TABLE Entregas (
     en_cod NUMBER(10) GENERATED ALWAYS AS IDENTITY NOT NULL,
-    en_remito_facutra VARCHAR2(45) NOT NULL,
+    en_remito_factura VARCHAR2(45) NOT NULL,
     en_fecha_entrega DATE NOT NULL,
     en_tiempo_permanencia NUMBER(10,4) NOT NULL,
     en_fecha_devolucion DATE,

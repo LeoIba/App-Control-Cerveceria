@@ -4,7 +4,7 @@ import java.sql.Date;
 
 public class entrega {
     private int enCod;
-    private String enRemitoFacutra;
+    private String enRemitoFactura;
     private Date enFechaEntrega;
     private double enTiempoPermanencia;
     private Date enFechaDevolucion; // Puede ser nula hasta que devuelvan el barril
@@ -14,7 +14,7 @@ public class entrega {
     public entrega(int enCod, String enRemitoFacutra, Date enFechaEntrega, double enTiempoPermanencia,
             Date enFechaDevolucion, int barrilesBCod, int clientesClCod) {
         this.enCod = enCod;
-        this.enRemitoFacutra = enRemitoFacutra;
+        this.enRemitoFactura = enRemitoFacutra;
         this.enFechaEntrega = enFechaEntrega;
         this.enTiempoPermanencia = enTiempoPermanencia;
         this.enFechaDevolucion = enFechaDevolucion;
@@ -24,7 +24,7 @@ public class entrega {
 
     public entrega(String enRemitoFacutra, Date enFechaEntrega, double enTiempoPermanencia, Date enFechaDevolucion,
             int barrilesBCod, int clientesClCod) {
-        this.enRemitoFacutra = enRemitoFacutra;
+        this.enRemitoFactura = enRemitoFacutra;
         this.enFechaEntrega = enFechaEntrega;
         this.enTiempoPermanencia = enTiempoPermanencia;
         this.enFechaDevolucion = enFechaDevolucion;
@@ -40,12 +40,12 @@ public class entrega {
         this.enCod = enCod;
     }
 
-    public String getEnRemitoFacutra() {
-        return enRemitoFacutra;
+    public String getEnRemitoFactura() {
+        return enRemitoFactura;
     }
 
-    public void setEnRemitoFacutra(String enRemitoFacutra) {
-        this.enRemitoFacutra = enRemitoFacutra;
+    public void setEnRemitoFactura(String enRemitoFactura) {
+        this.enRemitoFactura = enRemitoFactura;
     }
 
     public Date getEnFechaEntrega() {
