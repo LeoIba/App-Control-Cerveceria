@@ -2,6 +2,8 @@ package BackEnd.controllers;
 
 import BackEnd.DAO.loteDAO;
 import java.sql.Date;
+import java.util.List;
+import BackEnd.models.lote;
 
 public class loteController {
 
@@ -22,5 +24,24 @@ public class loteController {
         }
         return dao.registrarLotePLSQL(volTotal, fVenc, fMac, cMac, fHerv, cHerv, fWhir, cWhir, fFerm, cFerm, fDry, cDry,
                 fCarb, cCarb, fFin, recetaCod, barrilCod, fInicioComp, bCap, bConector, bEstado, bUbi, bInvCod);
+    }
+
+    public List<lote> listarTodos() {
+        return dao.getAll();
+    }
+
+    public lote busquedaPorID(int id) {
+        if (id <= 0)
+            return null;
+        return dao.getPorID(id);
+    }
+
+    public boolean actualizar(lote lote) {
+        if (lote == null || lote.getLotCod() <= 0)
+            return false;
+        if (lote.getLotVolumenTotal() <= 0 || lote.getRecetasRCod() <= 0 || lote.getLotFechaVecimiento() == null) {
+            return false;
+        }
+        return dao.modificar(lote);
     }
 }

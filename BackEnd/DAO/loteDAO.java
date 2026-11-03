@@ -1,11 +1,11 @@
 package BackEnd.DAO;
 
 import BackEnd.DBConnection;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Types;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import BackEnd.models.lote;
 
 public class loteDAO {
     public boolean registrarLotePLSQL(Double volTotal, Date fVenc, Date fMac, Double cMac, Date fHerv, Double cHerv,
@@ -86,6 +86,95 @@ public class loteDAO {
 
         } catch (SQLException e) {
             System.err.println("Error en la Transacción de Alta de Lote: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<lote> getAll() {
+        List<lote> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Lotes";
+
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                lista.add(new lote(rs.getInt("lot_cod"), rs.getDouble("lot_volumen_total"),
+                        rs.getDate("lot_fecha_vecimiento"), rs.getDate("fecha_maceracion"),
+                        rs.getDouble("cantidad_maceracion"), rs.getDate("fecha_hervido"),
+                        rs.getDouble("cantidad_hervido"), rs.getDate("fecha_whirpool"),
+                        rs.getDouble("cantidad_whirpool"), rs.getDate("fecha_fermentacion"),
+                        rs.getDouble("cantidad_fermentacion"), rs.getDate("fecha_dryhopping"),
+                        rs.getDouble("cantidad_dryhopping"), rs.getDate("fecha_carbonatacion"),
+                        rs.getDouble("cantidad_carbonatacion"), rs.getDate("lot_fecha_fin_preparado"),
+                        rs.getInt("Recetas_r_cod")));
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return lista;
+    }
+
+    public lote getPorID(int id) {
+        String sql = "SELECT * FROM Lotes WHERE lot_cod = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement consulta = conn.prepareStatement(sql)) {
+            consulta.setInt(1, id);
+            try (ResultSet rta = consulta.executeQuery()) {
+                if (rta.next()) {
+                    return new lote(
+                            rta.getInt("lot_cod"),
+                            rta.getDouble("lot_volumen_total"),
+                            rta.getDate("lot_fecha_vecimiento"),
+                            rta.getDate("fecha_maceracion"),
+                            rta.getDouble("cantidad_maceracion"),
+                            rta.getDate("fecha_hervido"),
+                            rta.getDouble("cantidad_hervido"),
+                            rta.getDate("fecha_whirpool"),
+                            rta.getDouble("cantidad_whirpool"),
+                            rta.getDate("fecha_fermentacion"),
+                            rta.getDouble("cantidad_fermentacion"),
+                            rta.getDate("fecha_dryhopping"),
+                            rta.getDouble("cantidad_dryhopping"),
+                            rta.getDate("fecha_carbonatacion"),
+                            rta.getDouble("cantidad_carbonatacion"),
+                            rta.getDate("lot_fecha_fin_preparado"),
+                            rta.getInt("Recetas_r_cod"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean modificar(lote lote) {
+        String sql = "UPDATE Lotes SET lot_volumen_total=?, lot_fecha_vecimiento=?, fecha_maceracion=?, cantidad_maceracion=?, fecha_hervido=?, cantidad_hervido=?, fecha_whirpool=?, cantidad_whirpool=?, fecha_fermentacion=?, cantidad_fermentacion=?, fecha_dryhopping=?, cantidad_dryhopping=?, fecha_carbonatacion=?, cantidad_carbonatacion=?, lot_fecha_fin_preparado=?, Recetas_r_cod=? WHERE lot_cod=?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement consulta = conn.prepareStatement(sql)) {
+
+            consulta.setDouble(1, lote.getLotVolumenTotal());
+            consulta.setDate(2, lote.getLotFechaVecimiento());
+            consulta.setObject(3, lote.getFechaMaceracion(), Types.DATE);
+            consulta.setObject(4, lote.getCantidadMaceracion(), Types.NUMERIC);
+            consulta.setObject(5, lote.getFechaHervido(), Types.DATE);
+            consulta.setObject(6, lote.getCantidadHervido(), Types.NUMERIC);
+            consulta.setObject(7, lote.getFechaWhirpool(), Types.DATE);
+            consulta.setObject(8, lote.getCantidadWhirpool(), Types.NUMERIC);
+            consulta.setObject(9, lote.getFechaFermentacion(), Types.DATE);
+            consulta.setObject(10, lote.getCantidadFermentacion(), Types.NUMERIC);
+            consulta.setObject(11, lote.getFechaDryhopping(), Types.DATE);
+            consulta.setObject(12, lote.getCantidadDryhopping(), Types.NUMERIC);
+            consulta.setObject(13, lote.getFechaCarbonatacion(), Types.DATE);
+            consulta.setObject(14, lote.getCantidadCarbonatacion(), Types.NUMERIC);
+            consulta.setObject(15, lote.getLotFechaFinPreparado(), Types.DATE);
+            consulta.setInt(16, lote.getRecetasRCod());
+            consulta.setInt(17, lote.getLotCod());
+            return consulta.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
             return false;
         }
     }
