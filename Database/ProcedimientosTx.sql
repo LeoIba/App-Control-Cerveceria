@@ -406,3 +406,30 @@ BEGIN
     CLOSE cm_cod;
 
 END receta_alta_vld;
+
+CREATE OR REPLACE PROCEDURE inventario_alta (litros IN NUMBER, estado IN VARCHAR2, barril_cod IN NUMBER) AS
+    existe_barril NUMBER;
+    inventario_cod NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO existe_barril
+    FROM Barriles
+    WHERE b_cod = barril_cod;
+    
+    IF existe_barril = 0 THEN
+        RAISE_APPLICATION_ERROR(-20006, 'El Barril NO se encuentra cargado');
+    END IF;
+
+    INSERT INTO Inventario (i_litros_totales, i_estado_etapa)
+    VALUES (litros, estado)
+    RETURNING i_cod INTO inventario_cod;
+
+    UPDATE Barriles 
+    SET Inventario_i_cod = inventario_cod
+    WHERE b_cod = barril_cod;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+
