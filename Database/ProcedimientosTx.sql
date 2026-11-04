@@ -463,3 +463,32 @@ EXCEPTION
         ROLLBACK;
         RAISE;
 END;
+
+CREATE OR REPLACE PROCEDURE cliente_alta (nombre IN VARCHAR2, direccion IN VARCHAR2, telefono IN VARCHAR2, barril_cod IN NUMBER DEFAULT NULL, fecha_entrega IN DATE DEFAULT NULL, remito IN VARCHAR2 DEFAULT NULL, tiempo_perm IN NUMBER DEFAULT NULL, fecha_dev IN DATE DEFAULT NULL)
+AS 
+existe_barril NUMBER := 0;
+cliente_codigo NUMBER;
+BEGIN
+    INSERT INTO Clientes (cl_nombre, cl_direccion, cl_telefono)
+    VALUES (nombre, direccion, telefono)
+    RETURNING cl_cod INTO cliente_codigo;
+
+    IF barril_cod IS NOT NULL THEN
+        SELECT COUNT(*) INTO existe_barril
+        FROM Barriles
+        WHERE b_cod = barril_cod;
+        
+        IF existe_barril = 0 THEN
+            RAISE_APPLICATION_ERROR(-20009, 'El Barril NO existe en el sistema');
+        END IF;
+
+        INSERT INTO Entregas(en_remito_factura, en_fecha_entrega, en_tiempo_permanencia, en_fecha_devolucion, Barriles_b_cod, Clientes_cl_cod) 
+        VALUES (remito, fecha_entrega, tiempo_perm, fecha_dev, barril_cod, cliente_codigo);
+    END IF;
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;

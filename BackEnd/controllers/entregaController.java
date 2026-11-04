@@ -6,7 +6,7 @@ import java.sql.Date;
 public class entregaController {
     private entregaDAO dao = new entregaDAO();
 
-    public boolean registrar(String remito, Date fEntrega, double tiempoPerm, Date fDevolucion, int barrilCod,
+    public boolean altaEntrega(String remito, Date fEntrega, double tiempoPerm, Date fDevolucion, int barrilCod,
             int clienteCod) {
         if (remito == null) {
             return false;
