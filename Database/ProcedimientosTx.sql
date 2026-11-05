@@ -211,7 +211,7 @@ BEGIN
         VALUES (p_ad_nombre_aditivo, p_ad_tipo_aditivo, p_ad_cantidad_aditivo)
         RETURNING a_cod INTO v_a_cod;
     else
-        v_ad_cod := p_ad_cod;
+        v_a_cod := p_ad_cod;
     end if;
     
     -- 4. Asociar los ingredientes a la receta en las tablas asociativas
@@ -356,7 +356,7 @@ BEGIN
               RAISE_APPLICATION_ERROR(-20015, 'Se debe enviar una levadura existente en la base de datos');
         end if;
         close cr_levadura;
-    END;
+    END IF;
     -- Validaciones de atributos obligatorios para Aditivos
     IF p_ad_cod is null then
         IF p_ad_nombre_aditivo IS NULL OR p_ad_tipo_aditivo IS NULL OR p_ad_cantidad_aditivo IS NULL THEN
