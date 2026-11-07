@@ -2,7 +2,6 @@ package BackEnd.apiWeb;
 
 import BackEnd.controllers.aditivoController;
 import BackEnd.models.*;
-import com.google.gson.JsonObject;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +21,8 @@ public class aditivoServlets extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ApiUtil.manejar(resp, () -> {
             aditivo a = ApiUtil.leer(req, aditivo.class);
-            ApiUtil.resultado(resp, controller.altaAditivo(a.getNombreAditivo(), a.getTipoAditivo(), a.getCantidadAditivo()));
+            ApiUtil.resultado(resp,
+                    controller.altaAditivo(a.getNombreAditivo(), a.getTipoAditivo(), a.getCantidadAditivo()));
         });
     }
 

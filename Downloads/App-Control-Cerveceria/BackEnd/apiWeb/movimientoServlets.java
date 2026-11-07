@@ -2,7 +2,6 @@ package BackEnd.apiWeb;
 
 import BackEnd.controllers.movimientoController;
 import BackEnd.models.*;
-import com.google.gson.JsonObject;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +14,8 @@ public class movimientoServlets extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ApiUtil.manejar(resp, () -> ApiUtil.listarOBuscar(req, resp, controller::listarTodos, controller::busquedaPorID));
+        ApiUtil.manejar(resp,
+                () -> ApiUtil.listarOBuscar(req, resp, controller::listarTodos, controller::busquedaPorID));
     }
 
     @Override
@@ -27,6 +27,7 @@ public class movimientoServlets extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ApiUtil.manejar(resp, () -> ApiUtil.resultado(resp, controller.actualizar(ApiUtil.leer(req, movimiento.class))));
+        ApiUtil.manejar(resp,
+                () -> ApiUtil.resultado(resp, controller.actualizar(ApiUtil.leer(req, movimiento.class))));
     }
 }

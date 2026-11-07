@@ -1,0 +1,12 @@
+cerveceria_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=ge91a6b65deeae4_cerveceria_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+cerveceria_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=ge91a6b65deeae4_cerveceria_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+cerveceria_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=ge91a6b65deeae4_cerveceria_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+cerveceria_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=ge91a6b65deeae4_cerveceria_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+cerveceria_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.sa-santiago-1.oraclecloud.com))(connect_data=(service_name=ge91a6b65deeae4_cerveceria_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+
