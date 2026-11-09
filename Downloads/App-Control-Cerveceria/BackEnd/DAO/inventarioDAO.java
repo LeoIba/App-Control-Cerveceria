@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class inventarioDAO {
-    public boolean registrarInventarioPLSQL(double litrosTotales, String estadoEtapa, int barrilCod) {
+    public boolean registrarInventarioPLSQL(double litrosTotales, String estadoEtapa, Integer barrilCod) {
         String sql = "{call inventario_alta(?, ?, ?)}";
         try (Connection conn = DBConnection.getConnection(); CallableStatement consulta = conn.prepareCall(sql)) {
             consulta.setDouble(1, litrosTotales);
             consulta.setString(2, estadoEtapa);
-            consulta.setInt(3, barrilCod);
+            if (barrilCod == null || barrilCod <= 0) {
+                consulta.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                consulta.setInt(3, barrilCod);
+            }
             consulta.execute();
             return true;
         } catch (SQLException e) {

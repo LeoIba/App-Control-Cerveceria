@@ -20,10 +20,11 @@ public class inventarioController {
         if (!EstadosPosibles.contains(estadoEtapa)) {
             return false;
         }
-        if (barrilCod <= 0) {
-            return false;
-        }
-
+        /*
+         * if (barrilCod <= 0) {
+         * return false;
+         * }
+         */
         return dao.registrarInventarioPLSQL(litrosTotales, estadoEtapa, barrilCod);
     }
 
