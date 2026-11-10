@@ -25,8 +25,8 @@ const E = {
         ["bEstadoOperativo", "Estado", pill], ["bUbicacionActual", "Ubicación"]],
         form: [["bCapacidad", "Capacidad (L)", "number"], ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
         ["bEstadoOperativo", "Estado", "select", ESTADOS], ["bUbicacionActual", "Ubicación actual", "text"],
-        ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]],
-        ["loteCod", "Lote de origen", "refopt", ["lotes", r => `Lote #${r.lotCod}`, "Sin Definir"], true],
+        ["inventarioICod", "Inventario", "ref", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`]],
+        ["loteCod", "Lote de origen", "ref", ["lotes", r => `Lote #${r.lotCod}`], true],
         ["fechaInicio", "Fecha de inicio", "date", null, true]]
     },
     lotes: {
@@ -62,9 +62,9 @@ const E = {
     inventario: {
         label: "Inventario", path: "/api/inventario", id: "iCod", nuevo: true, editar: false,
         cols: [["iCod", "N°"], ["iEstadoEtapa", "Etapa"], ["iLitrosTotales", "Litros totales"]],
-        // inventario_alta crea el inventario y se lo asigna a un barril ya cargado
         form: [["iLitrosTotales", "Litros totales", "number"], ["iEstadoEtapa", "Etapa", "select", ETAPAS],
-        ["barrilesBCod", "Barril al que se asigna", "ref", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bUbicacionActual}`]]]
+        ["barrilesBCod", "Barril al que se asigna", "refopt",
+            ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bUbicacionActual}`, "Sin Definir"]]]
     }
 };
 /* Recetas: sigue el contrato del procedimiento receta_alta (proceso existente + un grano, lúpulo, levadura y aditivo, existentes o nuevos) */
@@ -105,7 +105,7 @@ Object.assign(E, {
                 r => ESTADOS_DISPONIBLES.includes(r.bEstadoOperativo)]],
         ...nuevoDe("barrilesBCod", [n("bCapacidad", "Capacidad (L)"), ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
         ["bEstadoOperativo", "Estado", "select", ESTADOS], tx("bUbicacionActual", "Ubicación actual"),
-        ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]]])]
+        ["inventarioICod", "Inventario", "ref", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`]]])]
     },
     estilos: cat("Estilos", "/api/estilos", "ptCod", [["ptEstiloNombre", "Estilo"], ["ptAlcoholMinimo", "Alcohol mín."], ["ptAlcoholMaximo", "Alcohol máx."], ["ptAmargorMinimo", "Amargor mín."], ["ptAmargorMaximo", "Amargor máx."]],
         [tx("ptEstiloNombre", "Nombre del estilo"), n("ptDensidadIniMinima", "Densidad inicial mínima"), n("ptDensidadIniMaxima", "Densidad inicial máxima"), n("ptDensidadFinMinima", "Densidad final mínima"),
