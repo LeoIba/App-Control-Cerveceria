@@ -2,6 +2,7 @@
 const API_BASE = window.API_BASE ?? "";
 
 const ESTADOS = ["Sucio/Retornado", "Lavado/Satinizado", "Lleno", "En Uso", "En Mantenimiento", "Extraviado/Baja"];
+const ESTADOS_DISPONIBLES = ["Lavado/Satinizado", "Lleno"];
 const COLOR = {
     "Sucio/Retornado": "#8a6d3b", "Lavado/Satinizado": "#3b7ea1", "Lleno": "#d4901a",
     "En Uso": "#4f7f2f", "En Mantenimiento": "#7a5ba6", "Extraviado/Baja": "#b23a2e"
@@ -99,7 +100,9 @@ Object.assign(E, {
         form: [["recetasRCod", "Receta", "ref", ["recetas", r => `${r.rCodigo} · ${r.rNombre} v${r.rVersion}`]],
         n("lotVolumenTotal", "Volumen total (L)"), ["lotFechaVecimiento", "Fecha de vencimiento", "date"],
         ["fechaInicioComp", "Fecha de inicio del llenado", "date"],
-        ["", "Barril", "h"], ["barrilesBCod", "Usar un barril existente", "refopt", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`, "Crear barril nuevo…"]],
+        ["", "Barril", "h"], ["barrilesBCod", "Usar un barril existente", "refopt",
+            ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`, "Crear barril nuevo…",
+                r => ESTADOS_LOTE.includes(r.bEstadoOperativo)]], ,
         ...nuevoDe("barrilesBCod", [n("bCapacidad", "Capacidad (L)"), ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
         ["bEstadoOperativo", "Estado", "select", ESTADOS], tx("bUbicacionActual", "Ubicación actual"),
         ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]]])]
@@ -212,6 +215,9 @@ function valorParaOrdenar(r, col, extra = {}) {
         return v;
     }
 
+    if (v === null || v === undefined) return "";
+    if (typeof v === "number") return v;
+
     if (f) {
         try {
             const formateado = f(v, r, extra);
@@ -235,8 +241,11 @@ function valorParaOrdenar(r, col, extra = {}) {
 }
 
 function compararValores(a, b, asc = true) {
-    if (a === "" || a === null || a === undefined) return 1;
-    if (b === "" || b === null || b === undefined) return -1;
+    const vacioA = a === "" || a === null || a === undefined;
+    const vacioB = b === "" || b === null || b === undefined;
+    if (vacioA && vacioB) return 0;
+    if (vacioA) return 1;
+    if (vacioB) return -1;
 
     let resultado = 0;
     const numA = Number(a);
@@ -261,7 +270,7 @@ function ordenarTablaDOM(table, colIndex) {
     const thSeleccionado = Array.from(ths).find(h => Number(h.dataset.col) === colIndex);
     if (!thSeleccionado) return;
 
-    const esAscendente = !thSeleccionado.classList.contains("sort-asc");
+    const esAscendente = !thSeleccionado.classList.contains("sort-desc");
 
     ths.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
     thSeleccionado.classList.add(esAscendente ? "sort-asc" : "sort-desc");
@@ -309,7 +318,7 @@ async function mostrar(k) {
         ${e.nuevo ? '<button class="btn" id="nuevo">Agregar</button>' : ""}</div><div id="lista"></div>`;
 
     let ordenColumna = null;
-    let ordenAscendente = true;
+    let ordenAscendente = false;
 
     const pintar = () => {
         const q = $("#q").value.toLowerCase();
@@ -324,8 +333,12 @@ async function mostrar(k) {
             });
         }
 
-        const accionGenerador = e.editar ? r => puedeEditar(k, r) ? `<button class="btn sec" data-id="${r[e.id]}">Editar</button>` : "" : "";
-        $("#lista").innerHTML = tabla(e.cols, vis, extra, accionGenerador);
+        const textoAccion = k === "entregas" ? "Añadir Entrega" : "Editar";
+        const accionGenerador = e.editar
+            ? r => puedeEditar(k, r)
+                ? `<button class="btn sec" data-id="${r[e.id]}">${textoAccion}</button>`
+                : `<button class="btn sec" disabled aria-disabled="true" title="Esta entrega ya fue devuelta y no se puede editar">${textoAccion}</button>`
+            : "";
 
         if (ordenColumna !== null) {
             const th = $("#lista").querySelector(`th[data-col="${ordenColumna}"]`);
@@ -347,7 +360,7 @@ async function mostrar(k) {
                 ordenAscendente = !ordenAscendente;
             } else {
                 ordenColumna = colIdx;
-                ordenAscendente = true;
+                ordenAscendente = false;
             }
             pintar();
             return;
