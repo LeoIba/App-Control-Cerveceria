@@ -216,27 +216,17 @@ function valorParaOrdenar(r, col, extra = {}) {
     }
 
     if (v === null || v === undefined) return "";
-    if (typeof v === "number") return v;
 
     if (f) {
         try {
-            const formateado = f(v, r, extra);
-            if (formateado !== null && formateado !== undefined) {
-                const texto = String(formateado).replace(/<[^>]*>/g, "").trim();
-                if (/^#\d+$/.test(texto)) {
-                    return Number(texto.slice(1));
-                }
-                return texto;
-            }
+            const texto = String(f(v, r, extra) ?? "").replace(/<[^>]*>/g, "").trim();
+            if (/^#\d+$/.test(texto)) return Number(texto.slice(1));              // "#12" -> 12
+            if (typeof v === "number" && /^[\d\s:.,-]*$/.test(texto)) return v;   // "10:00" -> 10
+            if (texto) return texto;                                              // nombres -> texto
         } catch {
-            // Si falla el formateo se recurre al valor original
+            // si falla el formateo se usa el valor original
         }
     }
-
-    if (v === null || v === undefined) {
-        return "";
-    }
-
     return v;
 }
 
