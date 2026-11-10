@@ -102,7 +102,7 @@ Object.assign(E, {
         ["fechaInicioComp", "Fecha de inicio del llenado", "date"],
         ["", "Barril", "h"], ["barrilesBCod", "Usar un barril existente", "refopt",
             ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`, "Crear barril nuevo…",
-                r => ESTADOS_LOTE.includes(r.bEstadoOperativo)]], ,
+                r => ESTADOS_DISPONIBLES.includes(r.bEstadoOperativo)]],
         ...nuevoDe("barrilesBCod", [n("bCapacidad", "Capacidad (L)"), ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
         ["bEstadoOperativo", "Estado", "select", ESTADOS], tx("bUbicacionActual", "Ubicación actual"),
         ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]]])]
@@ -270,7 +270,7 @@ function ordenarTablaDOM(table, colIndex) {
     const thSeleccionado = Array.from(ths).find(h => Number(h.dataset.col) === colIndex);
     if (!thSeleccionado) return;
 
-    const esAscendente = !thSeleccionado.classList.contains("sort-desc");
+    const esAscendente = thSeleccionado.classList.contains("sort-desc");
 
     ths.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
     thSeleccionado.classList.add(esAscendente ? "sort-asc" : "sort-desc");
@@ -339,6 +339,8 @@ async function mostrar(k) {
                 ? `<button class="btn sec" data-id="${r[e.id]}">${textoAccion}</button>`
                 : `<button class="btn sec" disabled aria-disabled="true" title="Esta entrega ya fue devuelta y no se puede editar">${textoAccion}</button>`
             : "";
+
+        $("#lista").innerHTML = tabla(e.cols, vis, extra, accionGenerador);
 
         if (ordenColumna !== null) {
             const th = $("#lista").querySelector(`th[data-col="${ordenColumna}"]`);
@@ -412,7 +414,7 @@ async function formulario(k, fila) {
         const val = fila?.[n] ?? "";
         let ctl;
         if (tipo === "select") ctl = `<select name="${n}" required>${op.map(o => `<option ${o === val ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
-        else if (tipo.startsWith("ref")) ctl = `<select name="${n}" data-grp="${n}" ${tipo === "ref" ? "required" : ""}><option value="">${esc(op[2] ?? "Elegir…")}</option>${refs[n].map(r => { const id = r[E[op[0]].id]; return `<option value="${id}" ${id == val ? "selected" : ""}>${esc(op[1](r))}</option>`; }).join("")}</select>`;
+        else if (tipo.startsWith("ref")) ctl = `<select name="${n}" data-grp="${n}" ${tipo === "ref" ? "required" : ""}><option value="">${esc(op[2] ?? "Elegir…")}</option>${(op[3] ? refs[n].filter(op[3]) : refs[n]).map(r => { const id = r[E[op[0]].id]; return `<option value="${id}" ${id == val ? "selected" : ""}>${esc(op[1](r))}</option>`; }).join("")}</select>`;
         else {
             const v = tipo === "date" && val ? String(val).slice(0, 10) : val;
             const opc = n === "enFechaDevolucion" ? "" : "required";
