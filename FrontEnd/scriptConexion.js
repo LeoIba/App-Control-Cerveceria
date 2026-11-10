@@ -1,4 +1,4 @@
-﻿// Si el front se sirve desde otro origen que el servlet, definir antes: window.API_BASE = "http://localhost:8080/Cerveceria"
+// Si el front se sirve desde otro origen que el servlet, definir antes: window.API_BASE = "http://localhost:8080/Cerveceria"
 const API_BASE = window.API_BASE ?? "";
 
 const ESTADOS = ["Sucio/Retornado", "Lavado/Satinizado", "Lleno", "En Uso", "En Mantenimiento", "Extraviado/Baja"];
@@ -41,7 +41,7 @@ const E = {
         form: [["clNombre", "Nombre", "text"], ["clDireccion", "Dirección", "text"], ["clTelefono", "Teléfono", "tel"]]
     },
     entregas: {
-        label: "Entregas", path: "/api/entrega", id: "enCod", nuevo: true, editar: true,
+        label: "Entregas", path: "/api/entrega", id: "enCod", nuevo: true, editar: r => !r.enFechaDevolucion,
         cols: [["enRemitoFactura", "Remito / factura"], ["clientesClCod", "Cliente", (v, r, d) => esc(d.clientes?.[v] ?? "#" + v)],
         ["barrilesBCod", "Barril", v => "#" + v], ["enFechaEntrega", "Entrega", fecha],
         ["enFechaDevolucion", "Devolución", v => v ? fecha(v) : '<span class="pill" style="--c:#d4901a">Pendiente</span>']],
@@ -185,12 +185,109 @@ const api = {
     }
 };
 
-/* ---------- Vistas ---------- */
+/* ---------- Vistas y Utilidades de Tablas ---------- */
+function puedeEditar(k, fila) {
+    const entidad = E[k];
+    if (!entidad || !entidad.editar) {
+        return false;
+    }
+    if (typeof entidad.editar === "function") {
+        return Boolean(entidad.editar(fila));
+    }
+    if (k === "entregas" && fila && fila.enFechaDevolucion) {
+        return false;
+    }
+    return true;
+}
+
+function valorParaOrdenar(r, col, extra = {}) {
+    const [k, titulo, f] = col;
+    const v = r[k];
+
+    if (k === "enCod" && titulo === "Días afuera" && r.enFechaEntrega) {
+        return Math.floor((Date.now() - local(r.enFechaEntrega)) / 864e5);
+    }
+
+    if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v)) {
+        return v;
+    }
+
+    if (f) {
+        try {
+            const formateado = f(v, r, extra);
+            if (formateado !== null && formateado !== undefined) {
+                const texto = String(formateado).replace(/<[^>]*>/g, "").trim();
+                if (/^#\d+$/.test(texto)) {
+                    return Number(texto.slice(1));
+                }
+                return texto;
+            }
+        } catch {
+            // Si falla el formateo se recurre al valor original
+        }
+    }
+
+    if (v === null || v === undefined) {
+        return "";
+    }
+
+    return v;
+}
+
+function compararValores(a, b, asc = true) {
+    if (a === "" || a === null || a === undefined) return 1;
+    if (b === "" || b === null || b === undefined) return -1;
+
+    let resultado = 0;
+    const numA = Number(a);
+    const numB = Number(b);
+    const ambosNumeros = typeof a === "number" && typeof b === "number"
+        || (!isNaN(numA) && !isNaN(numB) && typeof a !== "boolean" && typeof b !== "boolean" && String(a).trim() !== "" && String(b).trim() !== "");
+
+    if (ambosNumeros) {
+        resultado = numA - numB;
+    } else {
+        resultado = String(a).localeCompare(String(b), "es", { numeric: true, sensitivity: "base" });
+    }
+
+    return asc ? resultado : -resultado;
+}
+
+function ordenarTablaDOM(table, colIndex) {
+    const tbody = table.querySelector("tbody");
+    if (!tbody) return;
+
+    const ths = table.querySelectorAll("th.sortable");
+    const thSeleccionado = Array.from(ths).find(h => Number(h.dataset.col) === colIndex);
+    if (!thSeleccionado) return;
+
+    const esAscendente = !thSeleccionado.classList.contains("sort-asc");
+
+    ths.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+    thSeleccionado.classList.add(esAscendente ? "sort-asc" : "sort-desc");
+
+    const filas = Array.from(tbody.querySelectorAll("tr"));
+    filas.sort((trA, trB) => {
+        const celdaA = trA.children[colIndex];
+        const celdaB = trB.children[colIndex];
+        const valA = celdaA ? (celdaA.dataset.val ?? celdaA.textContent.trim()) : "";
+        const valB = celdaB ? (celdaB.dataset.val ?? celdaB.textContent.trim()) : "";
+        return compararValores(valA, valB, esAscendente);
+    });
+
+    filas.forEach(f => tbody.appendChild(f));
+}
+
 function tabla(cols, filas, extra = {}, accion = "") {
     if (!filas.length) return '<p class="vacio">No hay registros todavía.</p>';
-    const th = cols.map(c => `<th>${c[1]}</th>`).join("") + (accion ? "<th></th>" : "");
-    const tr = filas.map(r => "<tr>" + cols.map(([k, , f]) => `<td>${f ? f(r[k], r, extra) : esc(r[k])}</td>`).join("")
-        + (accion ? `<td>${accion(r)}</td>` : "") + "</tr>").join("");
+    const th = cols.map((c, i) =>
+        `<th class="sortable" data-col="${i}" scope="col" tabindex="0" role="button" aria-label="Ordenar por ${esc(c[1])}"><span>${esc(c[1])}</span><span class="sort-ind" aria-hidden="true"></span></th>`
+    ).join("") + (accion ? "<th></th>" : "");
+    const tr = filas.map(r => "<tr>" + cols.map(c => {
+        const [k, , f] = c;
+        const valorSort = valorParaOrdenar(r, c, extra);
+        return `<td data-val="${esc(valorSort)}">${f ? f(r[k], r, extra) : esc(r[k])}</td>`;
+    }).join("") + (accion ? `<td>${accion(r)}</td>` : "") + "</tr>").join("");
     return `<div class="tabla-wrap"><table><thead><tr>${th}</tr></thead><tbody>${tr}</tbody></table></div>`;
 }
 
@@ -210,18 +307,61 @@ async function mostrar(k) {
         <input type="search" id="q" placeholder="Buscar" aria-label="Buscar en ${e.label}" value="${esc(filtroInicial)}">
         ${CAT.includes(k) ? '<button class="btn sec" id="volver">Catálogos</button>' : ""}
         ${e.nuevo ? '<button class="btn" id="nuevo">Agregar</button>' : ""}</div><div id="lista"></div>`;
+
+    let ordenColumna = null;
+    let ordenAscendente = true;
+
     const pintar = () => {
         const q = $("#q").value.toLowerCase();
-        const vis = filas.filter(r => !q || JSON.stringify(r).toLowerCase().includes(q));
-        $("#lista").innerHTML = tabla(e.cols, vis, extra, e.editar ? r => `<button class="btn sec" data-id="${r[e.id]}">Editar</button>` : "");
+        let vis = filas.filter(r => !q || JSON.stringify(r).toLowerCase().includes(q));
+
+        if (ordenColumna !== null && e.cols[ordenColumna]) {
+            const colDef = e.cols[ordenColumna];
+            vis = [...vis].sort((a, b) => {
+                const valA = valorParaOrdenar(a, colDef, extra);
+                const valB = valorParaOrdenar(b, colDef, extra);
+                return compararValores(valA, valB, ordenAscendente);
+            });
+        }
+
+        const accionGenerador = e.editar ? r => puedeEditar(k, r) ? `<button class="btn sec" data-id="${r[e.id]}">Editar</button>` : "" : "";
+        $("#lista").innerHTML = tabla(e.cols, vis, extra, accionGenerador);
+
+        if (ordenColumna !== null) {
+            const th = $("#lista").querySelector(`th[data-col="${ordenColumna}"]`);
+            if (th) {
+                th.classList.add(ordenAscendente ? "sort-asc" : "sort-desc");
+            }
+        }
     };
+
     filtroInicial = "";
     pintar();
     $("#q").oninput = pintar;
+
     $("#lista").onclick = ev => {
+        const th = ev.target.closest("th.sortable");
+        if (th) {
+            const colIdx = Number(th.dataset.col);
+            if (ordenColumna === colIdx) {
+                ordenAscendente = !ordenAscendente;
+            } else {
+                ordenColumna = colIdx;
+                ordenAscendente = true;
+            }
+            pintar();
+            return;
+        }
+
         const b = ev.target.closest("[data-id]");
-        if (b) formulario(k, filas.find(r => r[e.id] == b.dataset.id));
+        if (b) {
+            const fila = filas.find(r => r[e.id] == b.dataset.id);
+            if (fila && puedeEditar(k, fila)) {
+                formulario(k, fila);
+            }
+        }
     };
+
     if (e.nuevo) $("#nuevo").onclick = () => formulario(k, null);
     if (CAT.includes(k)) $("#volver").onclick = () => mostrar("catalogos");
 }
@@ -243,7 +383,7 @@ async function inicio(m) {
         <section><h2>Cerveza en planta</h2><div class="litros">${ETAPAS.map(s => `<div><b>${litros(s)} L</b><span>${s}</span></div>`).join("")}</div></section>
         <section><h2>Barriles afuera sin devolver</h2>${tabla([["clientesClCod", "Cliente", (v, r, d) => esc(nombres[v] ?? "#" + v)],
         ["barrilesBCod", "Barril", v => "#" + v], ["enFechaEntrega", "Entregado", fecha],
-        ["enCod", "Días afuera", (v, r) => { const d = dias(r), tarde = d > r.enTiempoPermanencia; return `<span class="${tarde ? "atraso" : ""}">${d}${tarde ? " (pasado del plazo)" : ""}</span>`; }]], pend)}</section>`;
+        ["enCod", "Días afuera", (v, r) => { const d = dias(r), tarde = d > r.enTiempoPermanencia; return `<span class="${tarde ? "atraso" : ""}">${d}${tarde ? " (pasado del plazo)" : ""}</span>`; }]], pend, { clientes: nombres })}</section>`;
     m.querySelector(".ciclo").onclick = ev => {
         const p = ev.target.closest("[data-estado]");
         if (p) { filtroInicial = p.dataset.estado; mostrar("barriles"); }
@@ -292,6 +432,29 @@ async function formulario(k, fila) {
 /* ---------- Arranque ---------- */
 $("#nav").innerHTML = Object.entries(MENU).map(([k, t]) => `<button data-k="${k}">${t}</button>`).join("");
 $("#nav").onclick = ev => { const b = ev.target.closest("button"); if (b) mostrar(b.dataset.k); };
+
+// Manejo de ordenación para tablas fuera de #lista (por ejemplo la tabla de Inicio)
+document.addEventListener("click", ev => {
+    const th = ev.target.closest("th.sortable");
+    if (!th) return;
+    if (th.closest("#lista")) return;
+    const table = th.closest("table");
+    if (table) {
+        ordenarTablaDOM(table, Number(th.dataset.col));
+    }
+});
+
+// Soporte de accesibilidad: ordenar al presionar Enter o Espacio en un th enfocado
+document.addEventListener("keydown", ev => {
+    if (ev.key === "Enter" || ev.key === " ") {
+        const th = ev.target.closest("th.sortable");
+        if (th) {
+            ev.preventDefault();
+            th.click();
+        }
+    }
+});
+
 fetch(API_BASE + "/api/estado").then(r => r.ok ? r.json() : null).then(j => {
     if (j && !j.db) {
         const d = $("#demo");

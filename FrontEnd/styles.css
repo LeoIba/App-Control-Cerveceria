@@ -346,6 +346,46 @@ th {
     background: #F5F3EE;
 }
 
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s, color .15s;
+}
+
+th.sortable:hover {
+    background: #ECE8DE;
+    color: var(--ink);
+}
+
+.sort-ind {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: .5rem;
+    vertical-align: middle;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: .3;
+    transition: opacity .15s;
+}
+
+th.sortable:hover .sort-ind {
+    opacity: .6;
+    border-bottom: 5px solid var(--ink);
+}
+
+th.sort-asc .sort-ind {
+    opacity: 1;
+    border-bottom: 6px solid var(--ink);
+    border-top: 0;
+}
+
+th.sort-desc .sort-ind {
+    opacity: 1;
+    border-top: 6px solid var(--ink);
+    border-bottom: 0;
+}
+
 tbody tr:last-child td {
     border-bottom: 0;
 }
