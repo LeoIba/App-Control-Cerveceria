@@ -1,4 +1,4 @@
-// Si el front se sirve desde otro origen que el servlet, definir antes: window.API_BASE = "http://localhost:8080/Cerveceria"
+﻿// Si el front se sirve desde otro origen que el servlet, definir antes: window.API_BASE = "http://localhost:8080/Cerveceria"
 const API_BASE = window.API_BASE ?? "";
 
 const ESTADOS = ["Sucio/Retornado", "Lavado/Satinizado", "Lleno", "En Uso", "En Mantenimiento", "Extraviado/Baja"];
@@ -21,19 +21,19 @@ const E = {
     barriles: {
         label: "Barriles", path: "/api/barriles", id: "bCod", nuevo: true, editar: true,
         cols: [["bCod", "N°"], ["bCapacidad", "Capacidad (L)"], ["bTipoConector", "Conector"],
-            ["bEstadoOperativo", "Estado", pill], ["bUbicacionActual", "Ubicación"]],
+        ["bEstadoOperativo", "Estado", pill], ["bUbicacionActual", "Ubicación"]],
         form: [["bCapacidad", "Capacidad (L)", "number"], ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
-            ["bEstadoOperativo", "Estado", "select", ESTADOS], ["bUbicacionActual", "Ubicación actual", "text"],
-            ["inventarioICod", "Inventario", "ref", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`]],
-            ["loteCod", "Lote de origen", "ref", ["lotes", r => `Lote #${r.lotCod}`], true],
-            ["fechaInicio", "Fecha de inicio", "date", null, true]]
+        ["bEstadoOperativo", "Estado", "select", ESTADOS], ["bUbicacionActual", "Ubicación actual", "text"],
+        ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]],
+        ["loteCod", "Lote de origen", "refopt", ["lotes", r => `Lote #${r.lotCod}`, "Sin Definir"], true],
+        ["fechaInicio", "Fecha de inicio", "date", null, true]]
     },
     lotes: {
         label: "Lotes", path: "/api/lotes", id: "lotCod", nuevo: true, editar: false,
         cols: [["lotCod", "N°"], ["recetasRCod", "Receta"], ["lotVolumenTotal", "Volumen (L)"],
-            ["lotFechaVecimiento", "Vence", fecha], ["lotFechaFinPreparado", "Fin de preparado", fecha]],
+        ["lotFechaVecimiento", "Vence", fecha], ["lotFechaFinPreparado", "Fin de preparado", fecha]],
         form: [["recetasRCod", "N° de receta", "number"], ["lotVolumenTotal", "Volumen total (L)", "number"],
-            ["lotFechaVecimiento", "Fecha de vencimiento", "date"]]
+        ["lotFechaVecimiento", "Fecha de vencimiento", "date"]]
     },
     clientes: {
         label: "Clientes", path: "/api/clientes", id: "clCod", nuevo: true, editar: true,
@@ -43,27 +43,27 @@ const E = {
     entregas: {
         label: "Entregas", path: "/api/entrega", id: "enCod", nuevo: true, editar: true,
         cols: [["enRemitoFactura", "Remito / factura"], ["clientesClCod", "Cliente", (v, r, d) => esc(d.clientes?.[v] ?? "#" + v)],
-            ["barrilesBCod", "Barril", v => "#" + v], ["enFechaEntrega", "Entrega", fecha],
-            ["enFechaDevolucion", "Devolución", v => v ? fecha(v) : '<span class="pill" style="--c:#d4901a">Pendiente</span>']],
+        ["barrilesBCod", "Barril", v => "#" + v], ["enFechaEntrega", "Entrega", fecha],
+        ["enFechaDevolucion", "Devolución", v => v ? fecha(v) : '<span class="pill" style="--c:#d4901a">Pendiente</span>']],
         form: [["enRemitoFactura", "Remito o factura", "text"], ["clientesClCod", "Cliente", "ref", ["clientes", r => r.clNombre]],
-            ["barrilesBCod", "Barril", "ref", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`]],
-            ["enFechaEntrega", "Fecha de entrega", "date"], ["enTiempoPermanencia", "Días previstos en el cliente", "number"],
-            ["enFechaDevolucion", "Fecha de devolución (dejar vacía si no volvió)", "date"]]
+        ["barrilesBCod", "Barril", "ref", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`]],
+        ["enFechaEntrega", "Fecha de entrega", "date"], ["enTiempoPermanencia", "Días previstos en el cliente", "number"],
+        ["enFechaDevolucion", "Fecha de devolución (dejar vacía si no volvió)", "date"]]
     },
     movimientos: {
         label: "Movimientos", path: "/api/movimientos", id: "movCod", nuevo: true, editar: false,
         cols: [["movFecha", "Fecha", fecha], ["movHora", "Hora", v => v + ":00"], ["barrilesBCod", "Barril", v => "#" + v],
-            ["movPuntoOrigen", "Origen"], ["movPuntoDestino", "Destino"], ["movResponsable", "Responsable"]],
+        ["movPuntoOrigen", "Origen"], ["movPuntoDestino", "Destino"], ["movResponsable", "Responsable"]],
         form: [["barrilesBCod", "Barril", "ref", ["barriles", r => `#${r.bCod} · ${r.bUbicacionActual}`]],
-            ["movFecha", "Fecha", "date"], ["movHora", "Hora (0 a 23)", "number"], ["movPuntoOrigen", "Origen", "text"],
-            ["movPuntoDestino", "Destino", "text"], ["movResponsable", "Responsable", "text"]]
+        ["movFecha", "Fecha", "date"], ["movHora", "Hora (0 a 23)", "number"], ["movPuntoOrigen", "Origen", "text"],
+        ["movPuntoDestino", "Destino", "text"], ["movResponsable", "Responsable", "text"]]
     },
     inventario: {
         label: "Inventario", path: "/api/inventario", id: "iCod", nuevo: true, editar: false,
         cols: [["iCod", "N°"], ["iEstadoEtapa", "Etapa"], ["iLitrosTotales", "Litros totales"]],
         // inventario_alta crea el inventario y se lo asigna a un barril ya cargado
         form: [["iLitrosTotales", "Litros totales", "number"], ["iEstadoEtapa", "Etapa", "select", ETAPAS],
-            ["barrilesBCod", "Barril al que se asigna", "ref", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bUbicacionActual}`]]]
+        ["barrilesBCod", "Barril al que se asigna", "ref", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bUbicacionActual}`]]]
     }
 };
 /* Recetas: sigue el contrato del procedimiento receta_alta (proceso existente + un grano, lúpulo, levadura y aditivo, existentes o nuevos) */
@@ -74,40 +74,40 @@ Object.assign(E, {
     recetas: {
         label: "Recetas", path: "/api/recetas", id: "rCod", nuevo: true, editar: false,
         cols: [["rCodigo", "Código"], ["rNombre", "Nombre"], ["rVersion", "Versión"],
-            ["estiloPtCod", "Estilo", (v, r, d) => esc(d.estilos?.[v] ?? "#" + v)], ["rBatchSize", "Lote (L)"], ["rAutor", "Autor"], ["rFechaC", "Creada", fecha]],
+        ["estiloPtCod", "Estilo", (v, r, d) => esc(d.estilos?.[v] ?? "#" + v)], ["rBatchSize", "Lote (L)"], ["rAutor", "Autor"], ["rFechaC", "Creada", fecha]],
         form: [tx("rNombre", "Nombre"), tx("rCodigo", "Código de receta"), n("rVersion", "Versión"), n("rBatchSize", "Tamaño de lote (L)"),
-            n("rEficienciaSize", "Eficiencia (%)"), tx("rAutor", "Autor"), ["rFechaC", "Fecha de creación", "date"],
-            ["", "Proceso", "h"],
-            ["estiloPtCod", "Estilo", "ref", ["estilos", r => r.ptEstiloNombre]],
-            ["maceracionMCod", "Maceración", "ref", ["maceraciones", r => `#${r.mCod} · agua/grano ${r.mRelacionAguaGrano}`]],
-            ["hervidoHCod", "Hervido", "ref", ["hervidos", r => `#${r.hCod} · ${r.hTiempoEbullicion} min`]],
-            ["whirpoolWCod", "Whirlpool", "ref", ["whirpools", r => `#${r.wCod} · reposo ${r.wTiempoReposo} min`]],
-            ["fermentacionFCod", "Fermentación", "ref", ["fermentaciones", r => `#${r.fCod}`]],
-            ["dryHoppingFDryCod", "Dry hopping", "refopt", ["dryhopping", r => `#${r.fDryCod} · ${r.tiempoContacto} h a ${r.temperatura} °C`, "Sin dry hopping"]],
-            ["carbonatacionCarCod", "Carbonatación", "ref", ["carbonataciones", r => `#${r.carCod} · ${r.carVolObjCO2} vol. · ${r.carMetodoEmpleado}`]],
-            ["", "Grano", "h"], ["gCod", "Usar uno existente", "refopt", ["granos", r => r.gNombre, "Crear nuevo…"]],
-            ...nuevoDe("gCod", [tx("gNombre", "Nombre"), tx("gTipo", "Tipo"), n("gPorcentaje", "Porcentaje (%)"), n("gPeso", "Peso"), tx("gPotencialExtraccion", "Potencial de extracción"), tx("gColor", "Color")]),
-            ["", "Lúpulo", "h"], ["luCod", "Usar uno existente", "refopt", ["lupulos", r => `${r.luVariedad} ${r.luAnioCosecha}`, "Crear nuevo…"]],
-            ...nuevoDe("luCod", [tx("luVariedad", "Variedad"), n("luAnioCosecha", "Año de cosecha"), tx("luFormato", "Formato"), n("luPorcentajeAlfaAcido", "Alfa ácidos (%)"), n("luCantidad", "Cantidad"), ["luProposito", "Propósito", "select", ["Amargor", "Sabor", "Aroma"]]]),
-            ["", "Levadura", "h"], ["leCod", "Usar una existente", "refopt", ["levaduras", r => r.leCepa, "Crear nueva…"]],
-            ...nuevoDe("leCod", [tx("leCepa", "Cepa"), ["leFormatoLev", "Formato", "select", ["Seca", "Líquida"]], n("leCantidadLev", "Cantidad"), n("leTasaInoculacion", "Tasa de inoculación")]),
-            ["", "Aditivo", "h"], ["aCod", "Usar uno existente", "refopt", ["aditivos", r => r.nombreAditivo, "Crear nuevo…"]],
-            ...nuevoDe("aCod", [tx("nombreAditivo", "Nombre"), tx("tipoAditivo", "Tipo"), n("cantidadAditivo", "Cantidad")])]
+        n("rEficienciaSize", "Eficiencia (%)"), tx("rAutor", "Autor"), ["rFechaC", "Fecha de creación", "date"],
+        ["", "Proceso", "h"],
+        ["estiloPtCod", "Estilo", "ref", ["estilos", r => r.ptEstiloNombre]],
+        ["maceracionMCod", "Maceración", "ref", ["maceraciones", r => `#${r.mCod} · agua/grano ${r.mRelacionAguaGrano}`]],
+        ["hervidoHCod", "Hervido", "ref", ["hervidos", r => `#${r.hCod} · ${r.hTiempoEbullicion} min`]],
+        ["whirpoolWCod", "Whirlpool", "ref", ["whirpools", r => `#${r.wCod} · reposo ${r.wTiempoReposo} min`]],
+        ["fermentacionFCod", "Fermentación", "ref", ["fermentaciones", r => `#${r.fCod}`]],
+        ["dryHoppingFDryCod", "Dry hopping", "refopt", ["dryhopping", r => `#${r.fDryCod} · ${r.tiempoContacto} h a ${r.temperatura} °C`, "Sin dry hopping"]],
+        ["carbonatacionCarCod", "Carbonatación", "ref", ["carbonataciones", r => `#${r.carCod} · ${r.carVolObjCO2} vol. · ${r.carMetodoEmpleado}`]],
+        ["", "Grano", "h"], ["gCod", "Usar uno existente", "refopt", ["granos", r => r.gNombre, "Crear nuevo…"]],
+        ...nuevoDe("gCod", [tx("gNombre", "Nombre"), tx("gTipo", "Tipo"), n("gPorcentaje", "Porcentaje (%)"), n("gPeso", "Peso"), tx("gPotencialExtraccion", "Potencial de extracción"), tx("gColor", "Color")]),
+        ["", "Lúpulo", "h"], ["luCod", "Usar uno existente", "refopt", ["lupulos", r => `${r.luVariedad} ${r.luAnioCosecha}`, "Crear nuevo…"]],
+        ...nuevoDe("luCod", [tx("luVariedad", "Variedad"), n("luAnioCosecha", "Año de cosecha"), tx("luFormato", "Formato"), n("luPorcentajeAlfaAcido", "Alfa ácidos (%)"), n("luCantidad", "Cantidad"), ["luProposito", "Propósito", "select", ["Amargor", "Sabor", "Aroma"]]]),
+        ["", "Levadura", "h"], ["leCod", "Usar una existente", "refopt", ["levaduras", r => r.leCepa, "Crear nueva…"]],
+        ...nuevoDe("leCod", [tx("leCepa", "Cepa"), ["leFormatoLev", "Formato", "select", ["Seca", "Líquida"]], n("leCantidadLev", "Cantidad"), n("leTasaInoculacion", "Tasa de inoculación")]),
+        ["", "Aditivo", "h"], ["aCod", "Usar uno existente", "refopt", ["aditivos", r => r.nombreAditivo, "Crear nuevo…"]],
+        ...nuevoDe("aCod", [tx("nombreAditivo", "Nombre"), tx("tipoAditivo", "Tipo"), n("cantidadAditivo", "Cantidad")])]
     },
     lotes: {
         ...E.lotes,
         form: [["recetasRCod", "Receta", "ref", ["recetas", r => `${r.rCodigo} · ${r.rNombre} v${r.rVersion}`]],
-            n("lotVolumenTotal", "Volumen total (L)"), ["lotFechaVecimiento", "Fecha de vencimiento", "date"],
-            ["fechaInicioComp", "Fecha de inicio del llenado", "date"],
-            ["", "Barril", "h"], ["barrilesBCod", "Usar un barril existente", "refopt", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`, "Crear barril nuevo…"]],
-            ...nuevoDe("barrilesBCod", [n("bCapacidad", "Capacidad (L)"), ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
-                ["bEstadoOperativo", "Estado", "select", ESTADOS], tx("bUbicacionActual", "Ubicación actual"),
-                ["inventarioICod", "Inventario", "ref", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`]]])]
+        n("lotVolumenTotal", "Volumen total (L)"), ["lotFechaVecimiento", "Fecha de vencimiento", "date"],
+        ["fechaInicioComp", "Fecha de inicio del llenado", "date"],
+        ["", "Barril", "h"], ["barrilesBCod", "Usar un barril existente", "refopt", ["barriles", r => `#${r.bCod} · ${r.bCapacidad} L · ${r.bEstadoOperativo}`, "Crear barril nuevo…"]],
+        ...nuevoDe("barrilesBCod", [n("bCapacidad", "Capacidad (L)"), ["bTipoConector", "Conector", "select", ["G", "A", "S", "Micromatic"]],
+        ["bEstadoOperativo", "Estado", "select", ESTADOS], tx("bUbicacionActual", "Ubicación actual"),
+        ["inventarioICod", "Inventario", "refopt", ["inventario", r => `#${r.iCod} · ${r.iEstadoEtapa}`, "Sin Definir"]]])]
     },
     estilos: cat("Estilos", "/api/estilos", "ptCod", [["ptEstiloNombre", "Estilo"], ["ptAlcoholMinimo", "Alcohol mín."], ["ptAlcoholMaximo", "Alcohol máx."], ["ptAmargorMinimo", "Amargor mín."], ["ptAmargorMaximo", "Amargor máx."]],
         [tx("ptEstiloNombre", "Nombre del estilo"), n("ptDensidadIniMinima", "Densidad inicial mínima"), n("ptDensidadIniMaxima", "Densidad inicial máxima"), n("ptDensidadFinMinima", "Densidad final mínima"),
-            n("ptDensidadFinMaxima", "Densidad final máxima"), n("ptAlcoholMinimo", "Alcohol mínimo"), n("ptAlcoholMaximo", "Alcohol máximo"), n("ptAmargorMinimo", "Amargor mínimo"),
-            n("ptAmargorMaximo", "Amargor máximo"), n("ptColorMinimo", "Color mínimo"), n("ptColorMaximo", "Color máximo")]),
+        n("ptDensidadFinMaxima", "Densidad final máxima"), n("ptAlcoholMinimo", "Alcohol mínimo"), n("ptAlcoholMaximo", "Alcohol máximo"), n("ptAmargorMinimo", "Amargor mínimo"),
+        n("ptAmargorMaximo", "Amargor máximo"), n("ptColorMinimo", "Color mínimo"), n("ptColorMaximo", "Color máximo")]),
     maceraciones: cat("Maceraciones", "/api/maceraciones", "mCod", [["mRelacionAguaGrano", "Relación agua/grano"]], [n("mRelacionAguaGrano", "Relación agua/grano")]),
     hervidos: cat("Hervidos", "/api/hervidos", "hCod", [["hTiempoEbullicion", "Ebullición (min)"]], [n("hTiempoEbullicion", "Tiempo de ebullición (min)")]),
     whirpools: cat("Whirlpools", "/api/whirpools", "wCod", [["wTiempoInicio", "Inicio"], ["wTiempoCentrifugado", "Centrifugado"], ["wTiempoReposo", "Reposo"]],
