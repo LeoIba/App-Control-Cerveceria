@@ -38,9 +38,8 @@ public class entregaController {
     public boolean actualizar(entrega en) {
         if (en == null || en.getEnCod() <= 0)
             return false;
-        if (en.getEnRemitoFactura() == null || en.getEnFechaEntrega() == null
-                || en.getEnTiempoPermanencia() <= 0 || en.getBarrilesBCod() <= 0
-                || en.getClientesClCod() <= 0) {
+        if (en.getEnRemitoFactura() == null || en.getEnFechaEntrega() == null || en.getEnTiempoPermanencia() <= 0
+                || en.getBarrilesBCod() <= 0 || en.getClientesClCod() <= 0) {
             return false;
         }
         return dao.modificar(en);
