@@ -47,4 +47,31 @@ public class aditivoDAO {
         }
         return lista;
     }
+
+    public aditivo getPorID(int id) throws SQLException {
+        String sql = "SELECT a_cod, ad_nombre_aditivo, ad_tipo_aditivo, ad_cantidad_aditivo FROM Aditivos WHERE a_cod = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new aditivo(rs.getInt("a_cod"), rs.getString("ad_nombre_aditivo"),
+                            rs.getString("ad_tipo_aditivo"), rs.getDouble("ad_cantidad_aditivo"));
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean modificar(aditivo a) throws SQLException {
+        String sql = "UPDATE Aditivos SET ad_nombre_aditivo=?, ad_tipo_aditivo=?, ad_cantidad_aditivo=? WHERE a_cod=?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, a.getNombreAditivo());
+            pstmt.setString(2, a.getTipoAditivo());
+            pstmt.setDouble(3, a.getCantidadAditivo());
+            pstmt.setInt(4, a.getaCod());
+            return pstmt.executeUpdate() > 0;
+        }
+    }
 }

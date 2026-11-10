@@ -1,5 +1,0 @@
-.vscode/
-.jar
-build/
-*.war
-lib/ojdbc*.jar

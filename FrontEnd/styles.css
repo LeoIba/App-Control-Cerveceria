@@ -1,0 +1,499 @@
+/* ============================================================
+   Paleta principal
+   --bg        : Soft Ivory  #FAF8F3
+   --surface   : Blanco hueso suave  #FFFFFF  (cards / tablas)
+   --border    : Ivory medio  #E4E0D5
+   --ink       : Negro Medianoche  #08090B
+   --ink-muted : Gris auxiliar  #5C5F66
+   --nav-bg    : Carbón oscuro  #0F1012
+   --nav-muted : Gris claro para texto nav inactivo  #8A8F99
+   --accent    : Verde Lima Natural  #8DB63C  (CTAs, estado activo nav)
+   --accent-fg : Negro sobre acento  #0D1200
+   --ok        : Verde salvia  #3A7D44  (barriles en uso / llenos)
+   --warn      : Ámbar cálido  #C97D10
+   --danger    : Rojo ladrillo  #B23A2E
+   --info      : Azul acero  #3B7EA1
+   --violet    : Violeta  #7A5BA6
+   --brown     : Marrón tierra  #8A6D3B
+   ============================================================ */
+:root {
+    --bg: #FAF8F3;
+    --surface: #FFFFFF;
+    --border: #E4E0D5;
+    --ink: #08090B;
+    --ink-muted: #5C5F66;
+    --nav-bg: #0F1012;
+    --nav-muted: #8A8F99;
+    --accent: #8DB63C;
+    --accent-fg: #0D1200;
+    --ok: #3A7D44;
+    --warn: #C97D10;
+    --danger: #B23A2E;
+    --info: #3B7EA1;
+    --violet: #7A5BA6;
+    --brown: #8A6D3B;
+
+    --titulo: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --texto: "Barlow", system-ui, sans-serif;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    --shadow-card: 0 1px 3px rgb(8 9 11 / .06), 0 1px 2px rgb(8 9 11 / .04);
+    --shadow-nav: 2px 0 12px rgb(0 0 0 / .30);
+}
+
+/* ── Reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font: 400 1rem/1.6 var(--texto);
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+h2 {
+    font: 700 1.5rem/1.1 var(--titulo);
+    letter-spacing: .01em;
+    margin: 0 0 .75rem;
+    color: var(--ink);
+}
+
+/* ── Banner de demo / error ──────────────────────────────── */
+#demo {
+    background: var(--warn);
+    color: #fff;
+    padding: .55rem 1.25rem;
+    font-weight: 600;
+    font-size: .9rem;
+    text-align: center;
+    letter-spacing: .02em;
+}
+
+/* ── Layout principal ────────────────────────────────────── */
+.app {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: 100vh;
+}
+
+/* ── Navegación lateral ──────────────────────────────────── */
+nav {
+    background: var(--nav-bg);
+    padding: 1.5rem .75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-nav);
+}
+
+/* Logo / título de la app */
+nav::before {
+    content: "Cervecería";
+    font: 700 1.35rem/1 var(--titulo);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0 .85rem 1.25rem;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid rgb(255 255 255 / .10);
+    margin-bottom: .6rem;
+}
+
+nav button {
+    all: unset;
+    cursor: pointer;
+    color: var(--nav-muted);
+    padding: .6rem .85rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: .95rem;
+    transition: background .15s, color .15s;
+    display: block;
+    width: 100%;
+}
+
+nav button:hover {
+    background: rgb(255 255 255 / .07);
+    color: #fff;
+}
+
+nav button[aria-current="page"] {
+    background: var(--accent);
+    color: var(--accent-fg);
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+/* ── Focus ring global (accesibilidad) ───────────────────── */
+nav button:focus-visible,
+.btn:focus-visible,
+.paso:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ── Área de contenido ───────────────────────────────────── */
+main {
+    padding: 2rem 2rem 2.5rem;
+    max-width: 1140px;
+    width: 100%;
+}
+
+main section+section {
+    margin-top: 2.5rem;
+}
+
+/* ── Cards del ciclo de barriles ─────────────────────────── */
+.ciclo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: .75rem;
+}
+
+.paso {
+    all: unset;
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--c, var(--border));
+    border-radius: var(--radius-md);
+    padding: .9rem 1rem .85rem;
+    display: grid;
+    gap: .2rem;
+    box-shadow: var(--shadow-card);
+    transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+
+.paso:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgb(8 9 11 / .10);
+    border-left-color: var(--c, var(--accent));
+}
+
+.paso b {
+    font: 700 2.6rem/1 var(--titulo);
+    color: var(--c, var(--ink));
+}
+
+.paso span {
+    color: var(--ink-muted);
+    font-size: .88rem;
+    line-height: 1.3;
+}
+
+/* ── Cards de litros en planta ───────────────────────────── */
+.litros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    gap: .75rem;
+}
+
+.litros div {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Barra decorativa superior en cada card de litros */
+.litros div::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--accent);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.litros b {
+    display: block;
+    font: 700 1.75rem/1.1 var(--titulo);
+    color: var(--ink);
+}
+
+.litros span {
+    color: var(--ink-muted);
+    font-size: .88rem;
+}
+
+/* ── Barra de herramientas ───────────────────────────────── */
+.barra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.barra h2 {
+    margin: 0;
+    margin-right: auto;
+}
+
+/* ── Inputs y selects ────────────────────────────────────── */
+input,
+select {
+    font: inherit;
+    padding: .5rem .7rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    min-width: 0;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+input:hover,
+select:hover {
+    border-color: #b8b2a6;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(141 182 60 / .22);
+    outline: none;
+}
+
+input[type="search"] {
+    min-width: 180px;
+}
+
+/* ── Botones ─────────────────────────────────────────────── */
+.btn {
+    font: 600 .9rem var(--texto);
+    background: var(--accent);
+    color: var(--accent-fg);
+    border: 0;
+    border-radius: var(--radius-sm);
+    padding: .55rem 1.1rem;
+    cursor: pointer;
+    letter-spacing: .02em;
+    transition: filter .15s, transform .1s;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+    filter: brightness(.96);
+}
+
+.btn.sec {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+}
+
+.btn.sec:hover {
+    background: var(--border);
+    filter: none;
+    transform: none;
+}
+
+/* ── Tablas ──────────────────────────────────────────────── */
+.tabla-wrap {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    text-align: left;
+    padding: .65rem .9rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+th {
+    font-weight: 600;
+    color: var(--ink-muted);
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    background: #F5F3EE;
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+tbody tr:hover td {
+    background: #FAFAF7;
+}
+
+td .btn {
+    padding: .25rem .65rem;
+    font-size: .85rem;
+}
+
+/* ── Pills de estado ─────────────────────────────────────── */
+.pill {
+    display: inline-block;
+    padding: .15rem .65rem;
+    border-radius: 99px;
+    color: #fff;
+    background: var(--c, var(--ink-muted));
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+/* ── Estados vacíos y alertas inline ────────────────────── */
+.vacio {
+    color: var(--ink-muted);
+    padding: 1.25rem 1rem;
+    margin: 0;
+    font-style: italic;
+}
+
+.atraso {
+    color: var(--danger);
+    font-weight: 600;
+}
+
+/* ── Formulario / Dialog ─────────────────────────────────── */
+dialog {
+    border: 0;
+    border-radius: var(--radius-lg);
+    padding: 0;
+    width: min(500px, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    box-shadow: 0 20px 50px rgb(0 0 0 / .22), 0 4px 16px rgb(0 0 0 / .12);
+}
+
+dialog::backdrop {
+    background: rgb(8 9 11 / .55);
+    backdrop-filter: blur(2px);
+}
+
+#frm {
+    padding: 1.5rem;
+    display: grid;
+    gap: .8rem;
+}
+
+#frm h2 {
+    font: 700 1.25rem/1.1 var(--titulo);
+    margin: 0 0 .25rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+#frm h3 {
+    font: 700 1rem var(--titulo);
+    margin: .5rem 0 0;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: .8rem;
+    border-top: 1px solid var(--border);
+    padding-top: .75rem;
+}
+
+#frm label {
+    display: grid;
+    gap: .3rem;
+    font-weight: 500;
+    font-size: .93rem;
+    color: var(--ink);
+}
+
+#frm .acciones {
+    display: flex;
+    gap: .5rem;
+    justify-content: flex-end;
+    margin-top: .5rem;
+    padding-top: .75rem;
+    border-top: 1px solid var(--border);
+}
+
+.error {
+    color: var(--danger);
+    margin: 0;
+    font-weight: 500;
+    font-size: .9rem;
+    min-height: 1.2em;
+}
+
+/* ── Responsive: celular ─────────────────────────────────── */
+@media (max-width: 720px) {
+    .app {
+        display: block;
+    }
+
+    main {
+        padding: 1rem 1rem 5.5rem;
+    }
+
+    nav {
+        position: fixed;
+        inset: auto 0 0 0;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: .4rem .5rem;
+        z-index: 10;
+        box-shadow: 0 -2px 12px rgb(0 0 0 / .30);
+        gap: .25rem;
+    }
+
+    nav::before {
+        display: none;
+    }
+
+    nav button {
+        white-space: nowrap;
+        padding: .5rem .75rem;
+        font-size: .88rem;
+        width: auto;
+    }
+}
+
+/* ── Animación del diálogo ───────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+    dialog[open] {
+        animation: entra .18s cubic-bezier(.22, .61, .36, 1);
+    }
+
+    @keyframes entra {
+        from {
+            transform: translateY(12px) scale(.98);
+            opacity: 0;
+        }
+    }
+}

@@ -306,7 +306,7 @@ CREATE TABLE Barriles (
     b_tipo_conector VARCHAR2(20) NOT NULL,
     b_estado_operativo VARCHAR2(30) NOT NULL,
     b_ubicacion_actual VARCHAR2(50) NOT NULL,
-    Inventario_i_cod NUMBER(10) NOT NULL,
+    Inventario_i_cod NUMBER(10),
 
     CONSTRAINT pk_barriles PRIMARY KEY (b_cod),
     CONSTRAINT ck_barriles_conector CHECK (b_tipo_conector IN ('G', 'A', 'S', 'Micromatic')),
@@ -331,7 +331,7 @@ CREATE TABLE Clientes (
    ============================================================ */
 CREATE TABLE Entregas (
     en_cod NUMBER(10) GENERATED ALWAYS AS IDENTITY NOT NULL,
-    en_remito_facutra VARCHAR2(45) NOT NULL,
+    en_remito_factura VARCHAR2(45) NOT NULL,
     en_fecha_entrega DATE NOT NULL,
     en_tiempo_permanencia NUMBER(10,4) NOT NULL,
     en_fecha_devolucion DATE,

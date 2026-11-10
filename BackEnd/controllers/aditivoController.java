@@ -43,4 +43,29 @@ public class aditivoController {
             return null;
         }
     }
+
+    public aditivo busquedaPorID(int id) {
+        if (id <= 0)
+            return null;
+        try {
+            return aditivoDAO.getPorID(id);
+        } catch (SQLException e) {
+            System.err.println("Error al buscar el aditivo: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean actualizar(aditivo a) {
+        if (a == null || a.getaCod() <= 0 || a.getNombreAditivo() == null
+                || a.getNombreAditivo().trim().isEmpty() || a.getTipoAditivo() == null
+                || a.getTipoAditivo().trim().isEmpty() || a.getCantidadAditivo() <= 0) {
+            return false;
+        }
+        try {
+            return aditivoDAO.modificar(a);
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar el aditivo: " + e.getMessage());
+            return false;
+        }
+    }
 }
