@@ -1,0 +1,20 @@
+{
+  "name": "app-control-cerveceria-renderizado",
+  "version": "1.0.0",
+  "description": "Una web app para controlar solamente con tu mano la producción de una cerveceria, de la manera más rápida y segura",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@capacitor/core": "^8.6.2"
+  }
+}
